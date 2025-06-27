@@ -1,8 +1,9 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate, Link, Navigate } from "react-router";
+import service from "../utils/service";
 
-export default function Home() {
+export default function HomeNew() {
 	const navigate = useNavigate();
 	const middleware = localStorage.getItem("TOKEN");
 
@@ -20,7 +21,7 @@ export default function Home() {
 	};
 
 	const onSubmit = async () => {
-		const response = await axios.post("http://penggajian.test/api/login", {
+		const response = await service.post("/login", {
 			email: form.nama,
 			password: form.password,
 		});
