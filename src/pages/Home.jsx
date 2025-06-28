@@ -1,6 +1,56 @@
-import React from "react";
+import axios from "axios";
+import React, { useState } from "react";
+import { useNavigate, Navigate } from "react-router";
+
+import service from "../utils/service";
 
 export default function Home() {
+	const navigate = useNavigate();
+	const TOKEN = localStorage.getItem("TOKEN_API");
+
+	if (TOKEN) {
+		return <Navigate to="/dashboard" />;
+	}
+
+	const [form, setForm] = useState({
+		email: "",
+		password: "",
+	});
+
+	// Rumus
+	const onChangeForm = (key, value) => {
+		setForm({ ...form, [key]: value });
+	};
+
+	const onSubmit = async () => {
+		// const response = await axios.post("http://penggajian.test/api/login", {
+		// 	email: form.email,
+		// 	password: form.password,
+		// });
+
+		const response = await service.post("/login", {
+			email: form.email,
+			password: form.password,
+		});
+
+		// response
+		const status = response.data.status;
+		if (status) {
+			const token = response.data.data.token;
+
+			// Add Token in Local Storage
+			localStorage.setItem("TOKEN_API", token);
+
+			navigate("/dashboard");
+		} else {
+			Swal.fire({
+				text: "Email / Password Salah",
+				icon: "error",
+			});
+		}
+	};
+	// function onSubmit(params) {}
+
 	return (
 		<div className="">
 			{/* Navbar */}
@@ -34,7 +84,7 @@ export default function Home() {
 			<section className="py-5">
 				<div className="container text-center">
 					<img src="/login.png" alt="" className="img-fluid" />
-					<p className="fs-3 fw-bold mt-3">Masuk ke Akun Anda</p>
+					<p className="fs-3 fw-bold mt-3 font-roboto">Masuk ke Akun Anda</p>
 				</div>
 			</section>
 
@@ -43,14 +93,15 @@ export default function Home() {
 					<div className="row">
 						<div className="col-md-4">
 							<div className="mb-3">
-								<label for="nama_pengguna" className="form-label">
-									Nama Pengguna / Email
+								<label for="email" className="form-label">
+									Email
 								</label>
 								<input
 									type="text"
 									className="form-control"
-									id="nama_pengguna"
-									placeholder="Masukkan Nama Pengguna / Email"
+									id="email"
+									placeholder="Masukkan Email"
+									onChange={event => onChangeForm("email", event.target.value)}
 								/>
 							</div>
 						</div>
@@ -62,17 +113,18 @@ export default function Home() {
 									Kata Sandi
 								</label>
 								<input
-									type="text"
+									type="password"
 									className="form-control"
 									id="kata_sandi"
 									placeholder="Masukkan Kata Sandi"
+									onChange={event => onChangeForm("password", event.target.value)}
 								/>
 							</div>
 						</div>
 					</div>
 					<div className="row">
 						<div className="col-md-4">
-							<button type="button" className="btn btn-primary w-100">
+							<button type="button" className="btn btn-primary w-100" onClick={onSubmit}>
 								Masuk
 							</button>
 						</div>

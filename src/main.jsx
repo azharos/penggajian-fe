@@ -5,11 +5,26 @@ import App from "./App.jsx";
 
 import { createBrowserRouter, RouterProvider } from "react-router";
 import Home from "./pages/Home.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
+import Karyawan from "./pages/Karyawan.jsx";
+import Departemen from "./pages/Departemen.jsx";
 
 let router = createBrowserRouter([
 	{
 		path: "/",
 		Component: Home,
+	},
+	{
+		path: "/dashboard",
+		Component: Dashboard,
+	},
+	{
+		path: "/karyawan",
+		Component: Karyawan,
+	},
+	{
+		path: "/departemen",
+		Component: Departemen,
 	},
 ]);
 
