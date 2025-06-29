@@ -25,7 +25,48 @@ export default function Departemen() {
 			}
 		);
 
+		// response
+		const status = response.data.status;
+		if (status) {
+			Swal.fire({
+				text: "Data Berhasil",
+				icon: "success",
+			});
+
+			setNama("");
+		} else {
+			Swal.fire({
+				text: "Data Gagal",
+				icon: "error",
+			});
+		}
+	};
+
+	const onFetch = async () => {
+		// Proses ke API
+		const response = await service.get("/departemen", {
+			headers: {
+				Authorization: "Bearer " + TOKEN,
+			},
+		});
+
 		console.log(response.data);
+
+		// response
+		// const status = response.data.status;
+		// if (status) {
+		// 	Swal.fire({
+		// 		text: "Data Berhasil",
+		// 		icon: "success",
+		// 	});
+
+		// 	setNama("");
+		// } else {
+		// 	Swal.fire({
+		// 		text: "Data Gagal",
+		// 		icon: "error",
+		// 	});
+		// }
 	};
 
 	return (
@@ -74,7 +115,7 @@ export default function Departemen() {
 							<div>
 								<input
 									type="text"
-									class="form-control"
+									className="form-control"
 									placeholder="Masukkan Nama Departemen"
 									value={nama}
 									onChange={event => setNama(event.target.value)}
@@ -83,15 +124,20 @@ export default function Departemen() {
 							<button type="button" className="btn btn-primary btn-sm ms-2" onClick={onSubmit}>
 								Submit
 							</button>
+							<button type="button" className="btn btn-primary btn-sm ms-2" onClick={onFetch}>
+								Fetch
+							</button>
 						</div>
 					</div>
 
 					<div className="table-responsive">
 						<table className="table table-striped table-bordered">
 							<thead>
-								<th>No</th>
-								<th>Nama</th>
-								<th>Aksi</th>
+								<tr>
+									<th>No</th>
+									<th>Nama</th>
+									<th>Aksi</th>
+								</tr>
 							</thead>
 							<tbody></tbody>
 						</table>
