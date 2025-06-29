@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import service from "../utils/service";
 
@@ -9,9 +9,84 @@ export default function Departemen() {
 		return <Navigate to="/" />;
 	}
 
+	useEffect(() => {
+		onFetch();
+	}, []);
+
+	const [id, setId] = useState(0);
 	const [nama, setNama] = useState("");
+	const [data, setData] = useState([]);
 
 	const onSubmit = async () => {
+		// Logic Action Create & Update
+		if (id == 0) {
+			// Create
+			// Proses ke API
+			const response = await service.post(
+				"/departemen",
+				{
+					nama: nama,
+				},
+				{
+					headers: {
+						Authorization: "Bearer " + TOKEN,
+					},
+				}
+			);
+
+			// response
+			const status = response.data.status;
+			if (status) {
+				Swal.fire({
+					text: "Data Berhasil",
+					icon: "success",
+				});
+
+				setNama("");
+				setId(0);
+				onFetch();
+			} else {
+				Swal.fire({
+					text: "Data Gagal",
+					icon: "error",
+				});
+			}
+		} else {
+			// Update
+			// Proses ke API
+			const response = await service.put(
+				"/departemen/" + id,
+				{
+					nama: nama,
+				},
+				{
+					headers: {
+						Authorization: "Bearer " + TOKEN,
+					},
+				}
+			);
+
+			// response
+			const status = response.data.status;
+			if (status) {
+				Swal.fire({
+					text: "Data Berhasil",
+					icon: "success",
+				});
+
+				setNama("");
+				setId(0);
+				onFetch();
+			} else {
+				Swal.fire({
+					text: "Data Gagal",
+					icon: "error",
+				});
+			}
+		}
+	};
+
+	const onSubmitOld = async () => {
 		// Proses ke API
 		const response = await service.post(
 			"/departemen",
@@ -50,23 +125,62 @@ export default function Departemen() {
 			},
 		});
 
-		console.log(response.data);
+		// response
+		const status = response.data.status;
+		if (status) {
+			setData(response.data.data);
+		} else {
+			Swal.fire({
+				text: "Data Gagal",
+				icon: "error",
+			});
+		}
+	};
+
+	const onEdit = async id => {
+		// Proses ke API
+		const response = await service.get("/departemen/" + id, {
+			headers: {
+				Authorization: "Bearer " + TOKEN,
+			},
+		});
 
 		// response
-		// const status = response.data.status;
-		// if (status) {
-		// 	Swal.fire({
-		// 		text: "Data Berhasil",
-		// 		icon: "success",
-		// 	});
+		const status = response.data.status;
+		if (status) {
+			setId(response.data.data.id);
+			setNama(response.data.data.nama);
+		} else {
+			Swal.fire({
+				text: "Data Gagal",
+				icon: "error",
+			});
+		}
+	};
 
-		// 	setNama("");
-		// } else {
-		// 	Swal.fire({
-		// 		text: "Data Gagal",
-		// 		icon: "error",
-		// 	});
-		// }
+	const onDelete = async id => {
+		// Proses ke API
+		const response = await service.delete("/departemen/" + id, {
+			headers: {
+				Authorization: "Bearer " + TOKEN,
+			},
+		});
+
+		// response
+		const status = response.data.status;
+		if (status) {
+			Swal.fire({
+				text: "Data Berhasil di-Hapus",
+				icon: "success",
+			});
+
+			onFetch();
+		} else {
+			Swal.fire({
+				text: "Data Gagal",
+				icon: "error",
+			});
+		}
 	};
 
 	return (
@@ -124,9 +238,6 @@ export default function Departemen() {
 							<button type="button" className="btn btn-primary btn-sm ms-2" onClick={onSubmit}>
 								Submit
 							</button>
-							<button type="button" className="btn btn-primary btn-sm ms-2" onClick={onFetch}>
-								Fetch
-							</button>
 						</div>
 					</div>
 
@@ -139,7 +250,30 @@ export default function Departemen() {
 									<th>Aksi</th>
 								</tr>
 							</thead>
-							<tbody></tbody>
+							<tbody>
+								{data.map((item, idx) => {
+									return (
+										<tr key={idx}>
+											<th>{parseInt(idx) + 1}</th>
+											<td>{item.nama}</td>
+											<td>
+												<button
+													className="btn btn-sm btn-warning"
+													onClick={() => onEdit(item.id)}
+												>
+													Edit
+												</button>
+												<button
+													className="btn btn-sm btn-danger"
+													onClick={() => onDelete(item.id)}
+												>
+													Hapus
+												</button>
+											</td>
+										</tr>
+									);
+								})}
+							</tbody>
 						</table>
 					</div>
 				</div>
