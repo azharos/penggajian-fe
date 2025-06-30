@@ -8,6 +8,7 @@ import Home from "./pages/Home.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Karyawan from "./pages/Karyawan.jsx";
 import Departemen from "./pages/Departemen.jsx";
+import Jabatan from "./pages/Jabatan.jsx";
 
 let router = createBrowserRouter([
 	{
@@ -25,6 +26,10 @@ let router = createBrowserRouter([
 	{
 		path: "/departemen",
 		Component: Departemen,
+	},
+	{
+		path: "/jabatan",
+		Component: Jabatan,
 	},
 ]);
 
